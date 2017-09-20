@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.txt
 
 # C extensions
 *.so
@@ -24,6 +25,36 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# File-based project format:
+*.iws
+
+*/.idea
+
+# User-specific stuff:
+**.idea/**/workspace.xml
+**.idea/**/tasks.xml
+**.idea/dictionaries
+**.idea/misc.xml
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Gradle:
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-debug/
+
+# Mongo Explorer plugin:
+.idea/**/mongoSettings.xml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
