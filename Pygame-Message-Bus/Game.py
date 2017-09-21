@@ -29,7 +29,8 @@ class Game:
         # Initialise the Message Bus System
         self.message_bus = Message_Queue()
         # Initialise the CMD Console
-        self.console = PyCon.PyCon(self.screen,
+        self.console = PyCon.PyCon(self.message_bus,
+                                   self.screen,
                                    (0, 0, ScreenWidth, ScreenHeight / 4),
                                    functions={"fps": self.get_fps,
                                               "size": self.get_screen_dimensions,
@@ -39,9 +40,11 @@ class Game:
                                               "pi": pi,
                                               "msg": self.message_bus.create_message},
                                    key_calls={},
-                                   vari={"A": 100, "B": 200, "C": 300},
+                                   vari={"Game": self},
                                    syntax={re_function: console_func}
                                    )
+        self.message_bus.add_member(self, "Game")
+        self.message_bus.add_member(self.console, "Console")
 
     # The Whole Game
     # Does it need anything else?
@@ -59,9 +62,10 @@ class Game:
         self.close()
 
     def on_message(self, msg):
+        print("Game got a msg from", msg.transmitter)
         self.console.output(msg)
-        if msg.type is "print":
-            print("Game got a msg!!!!!!!")
+        if msg.type == "print":
+            print("Game got a print msg with", '"',msg.data,'"')
 
     # The Events, like Key pressed and stuff
     def events(self, eventlist):
@@ -73,8 +77,8 @@ class Game:
                     self.console.set_active()
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                if event.key is pygame.K_m:
-                    self.message_bus.create_message(self.console, self, "print", "WHATS UP")
+                if event.key == pygame.K_F2:
+                    self.message_bus.create_message(self, self.console, "print", "WHATS UP")
 
     def close(self):
         # Close the Game

@@ -15,10 +15,11 @@ re_is_number = re.compile(r"""
 re_is_assign = re.compile(r'[$](?P<name>[a-zA-Z_]+\S*)\s*[=]\s*(?P<value>.+)')
 re_is_comment = re.compile(r'\s*#.*')
 re_is_var = re.compile(r'^[$][a-zA-Z_]+\w*\Z')
+re_is_msg = re.compile(r"[$](?P<name>[a-zA-Z_]+\S*)\s")
 
 
 class PyCon:
-    def __init__(self, screen, rect, functions=None, key_calls=None, vari=None, syntax=None):
+    def __init__(self, message_bus, screen, rect, functions=None, key_calls=None, vari=None, syntax=None):
         self.message_of_the_day = ["[PyCon 0.2] A Console for your Game!"]
 
         self.bg_color = (0, 25, 0)      # Blackish Green Background
@@ -44,6 +45,7 @@ class PyCon:
         self.c_draw_pos = 0
         self.c_scroll = 0
 
+        self.message_bus = message_bus
         self.parent_screen = screen
         self.rect = pygame.Rect(rect)
         self.size = self.rect.size
@@ -362,8 +364,9 @@ class PyCon:
         hist_file_cmd.close()
 
     def on_message(self, msg):
-        if msg.type is "print":
-            print("Console got a msg!!!!!")
+        print("Console got a msg from", msg.transmitter)
+        if msg.type == "print":
+            print("Console got a print msg with", '"',msg.data,'"')
 
 
 class ParseError(Exception):
