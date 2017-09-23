@@ -22,27 +22,34 @@ class Message_Queue:
             if msg:
                 for e, s in self.members.items():
                     if e == msg.receiver:
-                        print("Has a Key Receiver")
                         entity = msg.receiver
                     elif s == msg.receiver:
-                        print("Has a Value Receiver")
                         entity = e
 
-                if msg.transmitter in self.members.keys():
-                    print("Has a Key Transmitter")
-                elif msg.transmitter in self.members.values():
-                    print("Has a Value Transmitter")
-                else:
-                    print("NO TRANSMITTER!!!")
+                if msg.transmitter  not in self.members.keys() and msg.transmitter not in self.members.values():
+                    self.send_msg_to_console(msg, "No TRANSMITTER")
                     self.messages.remove(msg)
                     return None
 
                 if entity is not None:
                     entity.on_message(msg)
+                    self.send_msg_to_console(msg)
                     self.messages.remove(msg)
                 else:
-                    print("NO RECEIVER!!!")
+                    self.send_msg_to_console(msg, "No RECEIVER")
                     self.messages.remove(msg)
 
     def add_member(self, entity, string):
         self.members.update({entity:string})
+
+    def send_msg_to_console(self ,msg, string = None):
+            if msg.transmitter is not "Console" and msg.receiver is not "Console":
+                # print("its an output msg")
+                if "Console" in self.members.values():
+                    # print("print msg to Console")
+                    if string is not None:
+                        string = "ERROR: " + string
+                        self.create_message("Console", "Console", "error", string)
+                    else:
+                        self.create_message("Console", "Console", "output", msg)
+

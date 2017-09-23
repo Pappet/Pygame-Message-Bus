@@ -364,9 +364,10 @@ class PyCon:
         hist_file_cmd.close()
 
     def on_message(self, msg):
-        print("Console got a msg from", msg.transmitter)
-        if msg.type == "print":
-            print("Console got a print msg with", '"',msg.data,'"')
+        if msg.type == "output":
+            self.output("Message from: " + str(msg.data.transmitter) + " To: " + str(msg.data.receiver) + " Type: " + str(msg.data.type))
+        if msg.type == "error":
+            self.output(msg.data)
 
 
 class ParseError(Exception):

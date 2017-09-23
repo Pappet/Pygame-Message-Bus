@@ -32,10 +32,7 @@ class Game:
         self.console = PyCon.PyCon(self.message_bus,
                                    self.screen,
                                    (0, 0, ScreenWidth, ScreenHeight / 4),
-                                   functions={"fps": self.get_fps,
-                                              "size": self.get_screen_dimensions,
-                                              "shutdown": self.shutdown,
-                                              "add": add,
+                                   functions={"add": add,
                                               "draw": draw,
                                               "pi": pi,
                                               "msg": self.message_bus.create_message},
@@ -51,7 +48,7 @@ class Game:
     def run(self):
         # THE GAMELOOP
         while self.running:
-            self.clock.tick(FPS)
+            self.clock.tick()
             eventlist = pygame.event.get()
             self.message_bus.dispatch_messages()
             self.screen.fill((255, 255, 255))
@@ -62,10 +59,14 @@ class Game:
         self.close()
 
     def on_message(self, msg):
-        print("Game got a msg from", msg.transmitter)
-        self.console.output(msg)
         if msg.type == "print":
-            print("Game got a print msg with", '"',msg.data,'"')
+            self.console.output(msg.data)
+        if msg.type == "fps":
+            self.console.output(self.clock.get_fps())
+        if msg.type == "screen":
+            self.console.output(str(self.infoObject.current_w) + " " + str(self.infoObject.current_h))
+        if msg.type == "shutdown":
+            self.running = False
 
     # The Events, like Key pressed and stuff
     def events(self, eventlist):
@@ -78,31 +79,13 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                 if event.key == pygame.K_F2:
-                    self.message_bus.create_message(self, self.console, "print", "WHATS UP")
+                    self.message_bus.create_message(self.console, self, "print", "WHATS UP")
 
     def close(self):
         # Close the Game
         self.console.write_history_to_file()
         pygame.quit()
         sys.exit()
-
-    # Function for the communication with the console!
-    # DEPENDED on the Game Class
-    def get_fps(self):
-        """ Shows the FPS! Use: fps"""
-        return self.clock.get_fps()
-
-    # Test Function for the communication with the console!
-    # DEPENDED on the Game Class
-    def get_screen_dimensions(self):
-        """ Shows Window Resolution! Use: size"""
-        return self.infoObject.current_w, self.infoObject.current_h
-
-    # Test Function for the communication with the console!
-    # DEPENDED on the Game Class
-    def shutdown(self):
-        """CAVE: Shuts the Game Down!!! Use: shutdown"""
-        self.running = False
 
 if __name__ == "__main__":
     game = Game()
